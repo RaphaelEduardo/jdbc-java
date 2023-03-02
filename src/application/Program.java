@@ -5,11 +5,12 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import db.DB;
+import db.DbIntegrityException;
 
-// Atualizar Dados
+// Deletar Dados
 public class Program {
 
-	// PreparedStatement
+	// DbIntegrityException (excessão personalizada)
 	public static void main(String[] args) {
 
 		Connection ct = null;
@@ -17,20 +18,20 @@ public class Program {
 		
 		try {
 			ct = DB.getConnection();
+			
 			pst = ct.prepareStatement(
-					"UPDATE seller " + 
-					"SET BaseSalary = ? " +
-					"WHERE (DepartmentId = ?)");
+					"DELETE FROM department " + 
+					"WHERE (Id = ?)");
 					
-			pst.setDouble(1, 200.00);
-			pst.setInt(2, 2);
+			//(pos da ?, e o valor) 
+			pst.setInt(1, 2);
 			
 			int rowsAffected = pst.executeUpdate();
 			System.out.println("Done! Rows affected: " + rowsAffected);
 			
 		}
 		catch (SQLException e) {
-			e.printStackTrace();
+			throw new DbIntegrityException(e.getMessage());
 		}
 		finally {
 			DB.closeStatement(pst);
